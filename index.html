@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}الرئيسية - مُخططي{% endblock %}
+{% block content %}
+<div class="text-center mt-5">
+    <i class="bi bi-calendar-check fs-1 text-primary"></i>
+    <h1 class="display-5 fw-bold mt-3">مُخططي</h1>
+    <p class="lead text-muted">نظّم أهدافك السنوية، الشهرية، الأسبوعية، مهامك وملاحظاتك في مكان واحد</p>
+    <hr class="my-4">
+    <p>استخدم القائمة الجانبية (☰) للتنقل بين الأقسام.</p>
+    <i class="bi bi-arrow-right-short fs-3 text-primary"></i>
+</div>
+{% if due_recurring_tasks %}
+<div class="alert alert-warning mt-3">
+    <i class="bi bi-bell"></i> لديك {{ due_recurring_tasks|length }} مهمة روتينية مستحقة اليوم!
+</div>
+{% endif %}
+{% endblock %}
