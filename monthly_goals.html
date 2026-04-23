@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}الأهداف الشهرية{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-calendar-month"></i> الأهداف الشهرية</h2>
+    <button type="button" class="btn btn-primary rounded-circle" data-bs-toggle="modal" data-bs-target="#addMonthlyModal">
+        <i class="bi bi-plus-lg"></i>
+    </button>
+</div>
+
+{% for goal in monthly_goals %}
+<div class="card mb-3">
+    <div class="card-body">
+        <div class="d-flex justify-content-between">
+            <h5>{{ goal.title }}</h5>
+            <a href="{{ url_for('delete_monthly_goal', goal_id=goal.id) }}" class="text-danger" onclick="return confirm('حذف الهدف الشهري سيحذف جميع الأهداف الأسبوعية المرتبطة به. هل أنت متأكد؟')">
+                <i class="bi bi-trash3"></i>
+            </a>
+        </div>
+        <p class="text-muted">{{ goal.description }}</p>
+        <div class="small text-muted">
+            <i class="bi bi-calendar-range"></i> {{ goal.start_date.strftime('%Y-%m-%d') }} → {{ goal.end_date.strftime('%Y-%m-%d') }}
+            <br>
+            <strong>الهدف السنوي:</strong> {{ goal.annual_goal.title }}
+        </div>
+        <div class="mt-2">
+            <div class="progress" style="height: 8px;">
+                <div class="progress-bar bg-info" role="progressbar" style="width: {{ goal.progress }}%;"></div>
+            </div>
+            <small class="text-muted">نسبة الإنجاز: {{ "%.1f"|format(goal.progress) }}%</small>
+            {% if goal.is_achieved %}
+            <span class="badge bg-success ms-2">مُنجز</span>
+            {% endif %}
+        </div>
+        <a href="{{ url_for('weekly_goals') }}?monthly_id={{ goal.id }}" class="btn btn-sm btn-outline-primary mt-2">عرض الأهداف الأسبوعية</a>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-info">لا توجد أهداف شهرية. أضف هدفك الأول!</div>
+{% endfor %}
+
+<!-- Modal إضافة هدف شهري -->
+<div class="modal fade" id="addMonthlyModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">هدف شهري جديد</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ url_for('add_monthly_goal') }}" method="post" id="monthlyForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label>العنوان *</label>
+                        <input type="text" name="title" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>الوصف</label>
+                        <textarea name="description" class="form-control" rows="2"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label>تاريخ البداية *</label>
+                            <input type="date" name="start_date" id="monthly_start" class="form-control" required>
+                        </div>
+                        <div class="col">
+                            <label>تاريخ النهاية *</label>
+                            <input type="date" name="end_date" id="monthly_end" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label>الهدف السنوي المرتبط *</label>
+                        <select name="annual_goal_id" id="annual_goal_select" class="form-select" required>
+                            <option value="">-- اختر هدفًا سنويًا --</option>
+                            {% for ag in annual_goals %}
+                            <option value="{{ ag.id }}" data-start="{{ ag.start_date }}" data-end="{{ ag.end_date }}">{{ ag.title }} ({{ ag.start_date }} إلى {{ ag.end_date }})</option>
+                            {% endfor %}
+                        </select>
+                        <small class="text-muted">سيتم ترشيح الأهداف السنوية التي تغطي الفترة التي حددتها.</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="submit" class="btn btn-primary">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // فلترة الأهداف السنوية بناءً على التاريخ المدخل (اختياري)
+    const startInput = document.getElementById('monthly_start');
+    const endInput = document.getElementById('monthly_end');
+    const select = document.getElementById('annual_goal_select');
+    
+    function filterAnnualGoals() {
+        const start = startInput.value;
+        const end = endInput.value;
+        if (!start || !end) return;
+        
+        for (let i = 0; i < select.options.length; i++) {
+            const opt = select.options[i];
+            if (opt.value === "") continue;
+            const optStart = opt.getAttribute('data-start');
+            const optEnd = opt.getAttribute('data-end');
+            if (optStart <= start && optEnd >= end) {
+                opt.style.display = '';
+            } else {
+                opt.style.display = 'none';
+            }
+        }
+    }
+    startInput.addEventListener('change', filterAnnualGoals);
+    endInput.addEventListener('change', filterAnnualGoals);
+</script>
+{% endblock %}
