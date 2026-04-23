@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>{% block title %}مُخططي{% endblock %}</title>
+    <!-- Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- خطوط عصرية من Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Cairo', sans-serif;
+        }
+        body {
+            background: linear-gradient(145deg, #f4f6fc 0%, #eef2f7 100%);
+            min-height: 100vh;
+        }
+        /* تنسيق القائمة الجانبية المحسّن */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 260px;
+            background: linear-gradient(180deg, #1e2a3a 0%, #0f1722 100%);
+            color: #e2e8f0;
+            transform: translateX(100%);
+            transition: transform 0.25s ease-in-out;
+            z-index: 1050;
+            padding-top: 70px;
+            box-shadow: -4px 0 15px rgba(0,0,0,0.15);
+            backdrop-filter: blur(2px);
+        }
+        .sidebar.open {
+            transform: translateX(0);
+        }
+        .sidebar a {
+            color: #cbd5e6;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            margin: 4px 12px;
+            border-radius: 16px;
+            transition: all 0.2s;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        .sidebar a i {
+            font-size: 1.3rem;
+            width: 28px;
+            text-align: center;
+        }
+        .sidebar a:hover {
+            background: rgba(255,255,255,0.12);
+            color: white;
+            transform: translateX(-4px);
+        }
+        .sidebar .close-btn {
+            position: absolute;
+            top: 12px;
+            left: 20px;
+            font-size: 32px;
+            background: none;
+            border: none;
+            color: #cbd5e6;
+            cursor: pointer;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.45);
+            backdrop-filter: blur(3px);
+            z-index: 1040;
+            display: none;
+        }
+        .overlay.show {
+            display: block;
+        }
+        .menu-btn {
+            position: fixed;
+            top: 18px;
+            right: 18px;
+            font-size: 26px;
+            background: #1e2a3a;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            width: 48px;
+            height: 48px;
+            z-index: 1030;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: 0.2s;
+        }
+        .menu-btn:active {
+            transform: scale(0.94);
+        }
+        .content {
+            padding: 75px 16px 30px 16px;
+        }
+        /* البطاقات والأزرار والحقول */
+        .card {
+            border: none;
+            border-radius: 24px;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.15s, box-shadow 0.2s;
+            margin-bottom: 18px;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 28px rgba(0,0,0,0.08);
+        }
+        .card-header {
+            background: transparent;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            font-weight: 600;
+        }
+        .btn {
+            border-radius: 40px;
+            padding: 6px 16px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            transition: all 0.15s;
+        }
+        .btn-sm {
+            border-radius: 30px;
+            padding: 4px 12px;
+        }
+        .btn-icon {
+            width: 34px;
+            height: 34px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 30px;
+        }
+        .form-control, .form-select {
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
+            background: #ffffffcc;
+            font-size: 0.85rem;
+            padding: 10px 16px;
+            transition: 0.15s;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+            background: white;
+        }
+        .badge {
+            font-weight: 500;
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+        }
+        h1, h2, h3, h4, .display-5 {
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        h2 {
+            font-size: 1.6rem;
+        }
+        .task-completed {
+            text-decoration: line-through;
+            opacity: 0.65;
+            filter: grayscale(0.05);
+        }
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #5b6e8c;
+            font-size: 0.7rem;
+        }
+        /* تحسين عرض التصنيفات */
+        .category-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #f1f5f9;
+            border-radius: 40px;
+            padding: 3px 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        @media (min-width: 768px) {
+            .sidebar {
+                transform: translateX(0);
+                width: 250px;
+            }
+            .menu-btn {
+                display: none;
+            }
+            .content {
+                margin-right: 260px;
+                padding: 30px 30px 30px 20px;
+            }
+            .overlay {
+                display: none !important;
+            }
+        }
+        /* تأثيرات إضافية */
+        .rounded-circle {
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .progress {
+            height: 8px;
+            border-radius: 20px;
+            background: #e2e8f0;
+        }
+        .progress-bar {
+            border-radius: 20px;
+        }
+        .modal-content {
+            border-radius: 32px;
+            border: none;
+        }
+        .modal-header {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-btn" id="menuToggle"><i class="bi bi-list"></i></button>
+    <div class="sidebar" id="sidebar">
+        <button class="close-btn" id="closeSidebar">&times;</button>
+        <a href="{{ url_for('index') }}"><i class="bi bi-house-door"></i> الرئيسية</a>
+        <a href="{{ url_for('annual_goals') }}"><i class="bi bi-calendar-year"></i> الأهداف السنوية</a>
+        <a href="{{ url_for('monthly_goals') }}"><i class="bi bi-calendar-month"></i> الأهداف الشهرية</a>
+        <a href="{{ url_for('weekly_goals') }}"><i class="bi bi-calendar-week"></i> الأهداف الأسبوعية</a>
+        <a href="{{ url_for('tasks') }}"><i class="bi bi-check2-square"></i> المهام</a>
+        <a href="{{ url_for('recurring_tasks') }}"><i class="bi bi-arrow-repeat"></i> روتيني</a>
+        <a href="{{ url_for('notes') }}"><i class="bi bi-pencil-square"></i> الملاحظات</a>
+        <a href="{{ url_for('categories') }}"><i class="bi bi-tags"></i> التصنيفات</a>
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <div class="content">
+        {% block content %}{% endblock %}
+        <footer>© 2026 مُخططي - صُمم لتنظيم حياتك</footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const closeSidebar = document.getElementById('closeSidebar');
+        function openMenu() { sidebar.classList.add('open'); overlay.classList.add('show'); }
+        function closeMenu() { sidebar.classList.remove('open'); overlay.classList.remove('show'); }
+        menuToggle.addEventListener('click', openMenu);
+        closeSidebar.addEventListener('click', closeMenu);
+        overlay.addEventListener('click', closeMenu);
+    </script>
+</body>
+</html>
