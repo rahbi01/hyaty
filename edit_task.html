@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}تعديل مهمة{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="card-header bg-success text-white">
+        <h4>تعديل المهمة</h4>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            <div class="mb-3">
+                <label class="form-label">العنوان</label>
+                <input type="text" name="title" class="form-control" value="{{ task.title }}" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">الوصف</label>
+                <textarea name="description" class="form-control" rows="3">{{ task.description or '' }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">تاريخ الاستحقاق</label>
+                <input type="date" name="due_date" class="form-control" value="{{ task.due_date if task.due_date else '' }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">الأولوية</label>
+                <select name="priority" class="form-select">
+                    <option value="منخفضة" {% if task.priority == 'منخفضة' %}selected{% endif %}>منخفضة</option>
+                    <option value="عادي" {% if task.priority == 'عادي' %}selected{% endif %}>عادي</option>
+                    <option value="عالية" {% if task.priority == 'عالية' %}selected{% endif %}>عالية</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">التصنيف</label>
+                <select name="category_id" class="form-select">
+                    <option value="">بدون تصنيف</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.id }}" {% if task.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success">حفظ التعديلات</button>
+            <a href="{{ url_for('tasks') }}" class="btn btn-secondary">إلغاء</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
