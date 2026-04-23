@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}الأهداف الأسبوعية{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-calendar-week"></i> الأهداف الأسبوعية</h2>
+    <button type="button" class="btn btn-primary rounded-circle" data-bs-toggle="modal" data-bs-target="#addWeeklyModal">
+        <i class="bi bi-plus-lg"></i>
+    </button>
+</div>
+
+{% for goal in weekly_goals %}
+<div class="card mb-3">
+    <div class="card-body">
+        <div class="d-flex justify-content-between">
+            <h5>{{ goal.title }}</h5>
+            <div>
+                {% if not goal.is_achieved %}
+                <a href="{{ url_for('achieve_weekly_goal', goal_id=goal.id) }}" class="btn btn-sm btn-success me-1" onclick="return confirm('تأكيد إنجاز هذا الهدف الأسبوعي؟')">
+                    <i class="bi bi-check-lg"></i> إنجاز
+                </a>
+                {% else %}
+                <span class="badge bg-success">مُنجز ✓</span>
+                {% endif %}
+                <a href="{{ url_for('delete_weekly_goal', goal_id=goal.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('حذف الهدف الأسبوعي؟')">
+                    <i class="bi bi-trash3"></i>
+                </a>
+            </div>
+        </div>
+        <p class="text-muted">{{ goal.description }}</p>
+        <div class="small text-muted">
+            <i class="bi bi-calendar-range"></i> {{ goal.start_date.strftime('%Y-%m-%d') }} → {{ goal.end_date.strftime('%Y-%m-%d') }}
+            <br>
+            <strong>الهدف الشهري:</strong> {{ goal.monthly_goal.title }}
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-info">لا توجد أهداف أسبوعية. أضف هدفك الأول!</div>
+{% endfor %}
+
+<!-- Modal إضافة هدف أسبوعي -->
+<div class="modal fade" id="addWeeklyModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">هدف أسبوعي جديد</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ url_for('add_weekly_goal') }}" method="post">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label>العنوان *</label>
+                        <input type="text" name="title" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>الوصف</label>
+                        <textarea name="description" class="form-control" rows="2"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label>تاريخ البداية *</label>
+                            <input type="date" name="start_date" class="form-control" required>
+                        </div>
+                        <div class="col">
+                            <label>تاريخ النهاية *</label>
+                            <input type="date" name="end_date" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label>الهدف الشهري المرتبط *</label>
+                        <select name="monthly_goal_id" class="form-select" required>
+                            <option value="">-- اختر هدفًا شهريًا --</option>
+                            {% for mg in monthly_goals %}
+                            <option value="{{ mg.id }}" data-start="{{ mg.start_date }}" data-end="{{ mg.end_date }}">{{ mg.title }} ({{ mg.start_date }} إلى {{ mg.end_date }}) - {{ mg.annual_goal.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="submit" class="btn btn-primary">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
