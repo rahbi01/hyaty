@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}تعديل مهمة روتينية{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h4>تعديل المهمة الروتينية</h4>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            <div class="mb-3">
+                <label class="form-label">العنوان</label>
+                <input type="text" name="title" class="form-control" value="{{ task.title }}" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">الوصف</label>
+                <textarea name="description" class="form-control" rows="3">{{ task.description or '' }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">نوع التكرار</label>
+                <select name="frequency_type" class="form-select" id="freqType">
+                    <option value="daily" {% if task.frequency_type == 'daily' %}selected{% endif %}>يومي</option>
+                    <option value="weekly" {% if task.frequency_type == 'weekly' %}selected{% endif %}>أسبوعي</option>
+                    <option value="custom_days" {% if task.frequency_type == 'custom_days' %}selected{% endif %}>كل X أيام</option>
+                </select>
+            </div>
+            <div class="mb-3" id="freqDaysDiv" style="{% if task.frequency_type != 'custom_days' %}display:none;{% endif %}">
+                <label class="form-label">عدد الأيام</label>
+                <input type="number" name="frequency_days" class="form-control" value="{{ task.frequency_days or '' }}">
+            </div>
+            <div class="mb-3" id="weeklyDayDiv" style="{% if task.frequency_type != 'weekly' %}display:none;{% endif %}">
+                <label class="form-label">يوم الأسبوع</label>
+                <select name="weekday" class="form-select">
+                    <option value="0" {% if task.weekday == 0 %}selected{% endif %}>الإثنين</option>
+                    <option value="1" {% if task.weekday == 1 %}selected{% endif %}>الثلاثاء</option>
+                    <option value="2" {% if task.weekday == 2 %}selected{% endif %}>الأربعاء</option>
+                    <option value="3" {% if task.weekday == 3 %}selected{% endif %}>الخميس</option>
+                    <option value="4" {% if task.weekday == 4 %}selected{% endif %}>الجمعة</option>
+                    <option value="5" {% if task.weekday == 5 %}selected{% endif %}>السبت</option>
+                    <option value="6" {% if task.weekday == 6 %}selected{% endif %}>الأحد</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">التصنيف</label>
+                <select name="category_id" class="form-select">
+                    <option value="">بدون تصنيف</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.id }}" {% if task.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" name="is_active" class="form-check-input" id="isActive" {% if task.is_active %}checked{% endif %}>
+                <label class="form-check-label" for="isActive">نشطة</label>
+            </div>
+            <button type="submit" class="btn btn-primary">حفظ التعديلات</button>
+            <a href="{{ url_for('recurring_tasks') }}" class="btn btn-secondary">إلغاء</a>
+        </form>
+    </div>
+</div>
+<script>
+    const freqSelect = document.getElementById('freqType');
+    const freqDaysDiv = document.getElementById('freqDaysDiv');
+    const weeklyDayDiv = document.getElementById('weeklyDayDiv');
+    freqSelect.addEventListener('change', function() {
+        freqDaysDiv.style.display = this.value === 'custom_days' ? 'block' : 'none';
+        weeklyDayDiv.style.display = this.value === 'weekly' ? 'block' : 'none';
+    });
+</script>
+{% endblock %}
