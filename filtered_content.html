@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}{{ category.name }} - مُخططي{% endblock %}
+{% block content %}
+<div class="mb-4">
+    <h2 style="color: {{ category.color }};"><i class="bi bi-tag"></i> {{ category.name }}</h2>
+    <a href="{{ url_for('categories') }}" class="btn btn-sm btn-secondary">العودة للتصنيفات</a>
+</div>
+
+<!-- المهام العادية -->
+<h4>المهام</h4>
+{% for task in tasks %}
+<div class="card mb-2">
+    <div class="card-body d-flex justify-content-between align-items-center">
+        <div>
+            <h6 class="mb-1">{{ task.title }}</h6>
+            <p class="small text-muted mb-0">{{ task.description }}</p>
+            <div class="small text-muted">{{ task.due_date or '' }}</div>
+        </div>
+        <div>
+            <a href="{{ url_for('edit_task', task_id=task.id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+            <a href="{{ url_for('complete_task', task_id=task.id) }}" class="btn btn-sm btn-outline-success"><i class="bi bi-check-lg"></i></a>
+            <a href="{{ url_for('delete_task', task_id=task.id) }}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></a>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-secondary">لا توجد مهام بهذا التصنيف.</div>
+{% endfor %}
+
+<!-- الملاحظات -->
+<h4 class="mt-4">الملاحظات</h4>
+{% for note in notes %}
+<div class="card mb-2">
+    <div class="card-body d-flex justify-content-between align-items-center">
+        <div>
+            <h6 class="mb-1">{{ note.title }}</h6>
+            <p class="small text-muted mb-0">{{ note.content }}</p>
+        </div>
+        <div>
+            <a href="{{ url_for('edit_note', note_id=note.id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+            <a href="{{ url_for('delete_note', note_id=note.id) }}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></a>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-secondary">لا توجد ملاحظات بهذا التصنيف.</div>
+{% endfor %}
+
+<!-- المهام الروتينية -->
+<h4 class="mt-4">المهام الروتينية</h4>
+{% for rtask in recurring_tasks %}
+<div class="card mb-2">
+    <div class="card-body d-flex justify-content-between align-items-center">
+        <div>
+            <h6 class="mb-1">{{ rtask.title }}</h6>
+            <p class="small text-muted mb-0">{{ rtask.description }}</p>
+            <div class="small text-muted">
+                🔄 {{ rtask.frequency_type }}
+                {% if rtask.frequency_days %}كل {{ rtask.frequency_days }} أيام{% endif %}
+                | تالي: {{ rtask.next_due }}
+            </div>
+        </div>
+        <div>
+            <a href="{{ url_for('complete_recurring_task', task_id=rtask.id) }}" class="btn btn-sm btn-outline-success"><i class="bi bi-check-lg"></i></a>
+            <a href="{{ url_for('delete_recurring_task', task_id=rtask.id) }}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></a>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-secondary">لا توجد مهام روتينية بهذا التصنيف.</div>
+{% endfor %}
+{% endblock %}
