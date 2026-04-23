@@ -1,0 +1,391 @@
+<!-- ملف home.html مع إزالة البطاقة وجعل العناصر مباشرة على الخلفية -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <meta name="theme-color" content="#28a745">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>أشبال القرآن - المنصة التفاعلية لحفظ القرآن</title>
+
+    <!-- Bootstrap 5 RTL -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+
+    <!-- خطوط جوجل العربية -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome للأيقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Animate.css للحركات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+    <style>
+        /* === المتغيرات الأساسية === */
+        :root {
+            --primary-color: #28a745;
+            --secondary-color: #20c997;
+            --dark-color: #2c3e50;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 1rem;
+        }
+
+        .home-container {
+            max-width: 450px;
+            width: 100%;
+            margin: 0 auto;
+            animation: fadeIn 0.6s ease;
+        }
+
+        /* === الشعار === */
+        .logo-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            width: 130px;
+            height: 130px;
+            margin: 0 auto 1rem;
+            display: block;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(255,255,255,0.5);
+            padding: 0.3rem;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        .logo-text {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 0.2rem;
+            letter-spacing: -0.02em;
+        }
+
+        .logo-subtitle {
+            color: rgba(255,255,255,0.95);
+            font-size: 1.1rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            position: relative;
+            display: inline-block;
+            padding-bottom: 0.5rem;
+        }
+
+        .logo-subtitle::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 20%;
+            right: 20%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, white, transparent);
+        }
+
+        /* === نموذج الدخول === */
+        .form-section {
+            margin-top: 2rem;
+        }
+
+        .form-label {
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.3rem;
+            display: block;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .form-label i {
+            margin-left: 0.5rem;
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* حقول الإدخال */
+        .input-group {
+            margin-bottom: 1.5rem;
+            border-radius: 50px;
+            background: rgba(255,255,255,0.95);
+            border: 2px solid rgba(255,255,255,0.5);
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+        }
+
+        .input-group:focus-within {
+            box-shadow: 0 0 0 4px rgba(255,255,255,0.3);
+            background: white;
+        }
+
+        .input-group-text {
+            border-radius: 0 50px 50px 0;
+            background: transparent;
+            border: none;
+            padding: 0.8rem 1.2rem;
+        }
+
+        .input-group-text i {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .form-control {
+            font-family: 'Tajawal', sans-serif;
+            border-radius: 50px 0 0 50px;
+            padding: 0.8rem 1.2rem;
+            border: none;
+            background: transparent;
+            font-size: 1rem;
+            color: #2c3e50;
+        }
+
+        .form-control:focus {
+            box-shadow: none;
+            background: transparent;
+        }
+
+        .form-control::placeholder {
+            color: #adb5bd;
+            font-size: 0.9rem;
+        }
+
+        /* === زر الدخول === */
+        .btn-login {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50px;
+            padding: 1rem;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: white;
+            width: 100%;
+            transition: all 0.3s;
+            margin: 1.5rem 0;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            cursor: pointer;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+        }
+
+        .btn-login i {
+            font-size: 1.3rem;
+        }
+
+        /* === رسالة الخطأ === */
+        .error-message {
+            background: rgba(248, 215, 218, 0.95);
+            color: #721c24;
+            border-radius: 50px;
+            padding: 0.8rem 1.5rem;
+            margin: 1rem 0;
+            font-size: 0.95rem;
+            text-align: center;
+            border: 2px solid rgba(220, 53, 69, 0.3);
+            backdrop-filter: blur(5px);
+            animation: shake 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .error-message i {
+            font-size: 1.1rem;
+        }
+
+        /* === التذييل === */
+        .footer {
+            margin-top: 2.5rem;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.85rem;
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .footer i {
+            margin: 0 0.3rem;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .footer small {
+            display: block;
+            margin-top: 0.3rem;
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+
+        /* === الحركات === */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        /* === تحسينات للشاشات الصغيرة === */
+        @media (max-width: 400px) {
+            .logo {
+                width: 100px;
+                height: 100px;
+            }
+
+            .logo-text {
+                font-size: 2rem;
+            }
+
+            .logo-subtitle {
+                font-size: 0.95rem;
+            }
+
+            .btn-login {
+                font-size: 1.1rem;
+                padding: 0.9rem;
+            }
+
+            .input-group-text {
+                padding: 0.7rem 1rem;
+            }
+
+            .form-control {
+                padding: 0.7rem 1rem;
+                font-size: 0.95rem;
+            }
+        }
+
+        /* دعم للشاشات الكبيرة */
+        @media (min-width: 768px) {
+            .home-container {
+                max-width: 500px;
+            }
+
+            .logo {
+                width: 150px;
+                height: 150px;
+            }
+
+            .logo-text {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="home-container">
+        <!-- قسم الشعار - مباشرة على الخلفية -->
+        <div class="logo-section animate__animated animate__fadeInDown">
+            <img src="{{ url_for('static', filename='images/logo.png') }}"
+                 alt="شعار أشبال القرآن"
+                 class="logo"
+                 onerror="this.src='https://via.placeholder.com/150x150?text=Logo'">
+
+            <h1 class="logo-text">أشبال القرآن</h1>
+            <div class="logo-subtitle">طريقك لحفظ وإتقان القرآن</div>
+        </div>
+
+        <!-- قسم تسجيل الدخول -->
+        <div class="form-section animate__animated animate__fadeInUp">
+            <form method="post" action="{{ url_for('do_login') }}">
+                <!-- حقل اسم المستخدم -->
+                <label class="form-label">
+                    <i class="fas fa-user"></i>
+                    اسم المستخدم
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="fas fa-user"></i>
+                    </span>
+                    <input type="text"
+                           name="username"
+                           class="form-control"
+                           placeholder="أدخل اسم المستخدم"
+                           required>
+                </div>
+
+                <!-- حقل كلمة المرور -->
+                <label class="form-label">
+                    <i class="fas fa-lock"></i>
+                    كلمة المرور
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="fas fa-lock"></i>
+                    </span>
+                    <input type="password"
+                           name="password"
+                           class="form-control"
+                           placeholder="أدخل كلمة المرور"
+                           required>
+                </div>
+
+                <!-- زر الدخول -->
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i>
+                    دخول
+                </button>
+            </form>
+
+            <!-- رسالة الخطأ -->
+            {% if error %}
+            <div class="error-message">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ error }}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- التذييل -->
+
+    </div>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/static/service-worker.js').then(function(registration) {
+                    console.log('ServiceWorker registered successfully');
+                }, function(err) {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
