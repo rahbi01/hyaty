@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}تعديل هدف شهري{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="card-header bg-success text-white">
+        <h4>تعديل الهدف الشهري</h4>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            <div class="mb-3">
+                <label class="form-label">العنوان</label>
+                <input type="text" name="title" class="form-control" value="{{ goal.title }}" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">الوصف</label>
+                <textarea name="description" class="form-control" rows="3">{{ goal.description or '' }}</textarea>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">تاريخ البداية</label>
+                    <input type="date" name="start_date" class="form-control" value="{{ goal.start_date }}" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">تاريخ النهاية</label>
+                    <input type="date" name="end_date" class="form-control" value="{{ goal.end_date }}" required>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">الهدف السنوي المرتبط</label>
+                <select name="annual_goal_id" class="form-select" required>
+                    {% for ag in annual_goals %}
+                    <option value="{{ ag.id }}" {% if ag.id == goal.annual_goal_id %}selected{% endif %}>
+                        {{ ag.title }} ({{ ag.start_date }} → {{ ag.end_date }})
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success">حفظ التعديلات</button>
+            <a href="{{ url_for('monthly_goals') }}" class="btn btn-secondary">إلغاء</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
